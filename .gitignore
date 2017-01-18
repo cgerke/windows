@@ -4,6 +4,8 @@
 !automate
 automate/*.exe
 automate/*.msu
+automate/bin/*.exe
+automate/bin/*.msu
 !*.bat
 !*.cmd
 !*.ps1

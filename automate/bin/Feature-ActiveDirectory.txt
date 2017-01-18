@@ -1,0 +1,15 @@
+﻿[DCInstall]
+ReplicaOrNewDomain=Domain
+NewDomain=Forest
+NewDomainDNSName=cgerke.ddns.net
+ForestLevel=4
+DomainNetbiosName=cgerke
+DomainLevel=4
+InstallDNS=Yes
+ConfirmGc=Yes
+CreateDNSDelegation=No
+DatabasePath="C:\NTDS"
+LogPath="C:\LOGS"
+SYSVOLPath="C:\SYSVOL"
+SafeModeAdminPassword=TellEvery1!
+RebootOnCompletion=Yes
