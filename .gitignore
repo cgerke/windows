@@ -1,10 +1,9 @@
 /*
 !.gitignore
 !README.md
-!automate/*.bat
-!automate/*.cmd
-!automate/*.ps1
-!automate/*.txt
+!automate
+automate/*.exe
+automate/*.msu
 !*.bat
 !*.cmd
 !*.ps1
