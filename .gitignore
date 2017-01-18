@@ -1,0 +1,11 @@
+/*
+!.gitignore
+!README.md
+!automate/*.bat
+!automate/*.cmd
+!automate/*.ps1
+!automate/*.txt
+!*.bat
+!*.cmd
+!*.ps1
+!*.txt
