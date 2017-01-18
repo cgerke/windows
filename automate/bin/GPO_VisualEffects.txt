@@ -1,0 +1,13 @@
+CLASS MACHINE
+
+CATEGORY "Custom Settings"
+
+    KEYNAME "SYSTEM\CurrentControlSet\Services\lanmanserver\Parameters"
+
+    POLICY "Kerberos MaxTokenSize"
+        VALUENAME "MaxTokenSize"
+        VALUEON NUMERIC 48000
+        VALUEOFF NUMERIC 0
+    END POLICY
+
+END CATEGORY
