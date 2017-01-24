@@ -22,11 +22,17 @@ Switch -regex ($OperatingSystem)
     "Microsoft Windows Server 2008 R2 Enterprise" {
         $features = "$env:SystemDrive\dism.log"
         If (!(Test-Path $features)){
+            # Vital prerequisites otherwise you will have issues with roles (particularly Application Catalog).
+            #
             # Application Server
             dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:AppServer
             dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:AppServer-UI
             #.NET Framework
             dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:NetFx3
+            dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:WAS-WindowsActivationService
+            dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:WAS-ProcessModel
+            dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:WAS-NetFxEnvironment
+            dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:WAS-ConfigurationAPI
             dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:WCF-HTTP-Activation
             dism /LogPath:"$env:SystemDrive\dism-netfx3.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:WCF-NonHTTP-Activation
             # Web server
@@ -39,7 +45,7 @@ Switch -regex ($OperatingSystem)
             dism /LogPath:"$env:SystemDrive\dism-iis.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:IIS-ManagementConsole
             dism /LogPath:"$env:SystemDrive\dism-iis.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:IIS-ManagementService
             dism /LogPath:"$env:SystemDrive\dism-iis.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:IIS-LegacyScripts
-            dism /LogPath:"$env:SystemDrive\dism-iis.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:disIIS-LegacySnapIn
+            dism /LogPath:"$env:SystemDrive\dism-iis.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:IIS-LegacySnapIn
             dism /LogPath:"$env:SystemDrive\dism-iis.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:IIS-IIS6ManagementCompatibility
             dism /LogPath:"$env:SystemDrive\dism-iis.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:IIS-Metabase
             dism /LogPath:"$env:SystemDrive\dism-iis.log" /LogLevel:1 /online /NoRestart /Enable-Feature /FeatureName:IIS-WMICompatibility
@@ -175,10 +181,48 @@ Extend the Active Directory schema for Configuration Manager
     \SMSSetup\Bin\x64\Extadsch.exe
     C:\ExtADSch.log
 
-Firewall TCP Inbound 1433 and 4022 SQL Replication GPO 
+Firewall TCP Inbound 1433, 4022 SQL Replication GPO 
     Computer Configuration -> Policies -> Windows Settings -> Security Settings -> Windows Firewall with Advanced Security -> Inbound Rules
 
 Install a Configuration Manager Primary Site
     Configure the Communication method on each site system role
 
+Administration -> Site Configuration -> Servers and Site System Roles, Right click on your server and choose Add Site System Role
+    Software update point
+    Use this server as the active software update point
+    Enable syncronization on a schedule
+    Immediately expire a superseded software update
+    Add Definition Updates
+    Add Office and Windows Products
+
+Enable Discovery Methods
+
+Configure Boundaries
+    Boundary Groups -> Create Boundary Group
+
+# Features prequisites are important here, they must all be correct prior or you will have issues enabling these roles.
+Add the Application Catalog Web Site Roles
+    Servers and Site System Roles -> Add Site System Roles.
+    Select both of the Application Catalog roles
+
+    (Monitoring -> System Status -> Component Status to troubleshoot)
+    After installing these roles/features, you might have to register ASP.NET with IIS. 
+    The simplest way is to open an elevated command prompt: %windir%\Microsoft.NET\Framework64\v4.0.30319>aspnet_regiis.exe –r
+
+Configure Client Agent Settings
+    Administration -> Client Settings -> Defaults Clients Settings -> Properties
+    Client Policy -> Client policy polling interval -> 15
+    Computer Agent -> Default Application Catalog Website
+    Computer Agent -> Add default Application Catalog website to Internet Explorer trusted zone -> True
+    Computer Agent -> Software updates -> schedule from 7 days to 1 day, this will be because we want to synchronize Endpoint Protection definition updates on a daily basis.
+    Computer Agent -> User and Device Affinity -> Allow users to define their primary device -> True.
+
+    (Automatic User Device Affinity can be enabled by modifying the Client Settings policy. Under User and Device Affinity, change the this to Yes for the device and user
+    settings. It’s important that the Audit account logon events and Audit logon events are enabled on computers too, as these are used to determine the device affinity.
+    This decision should be based on your environment, ie would you really want all software installing automatically if a user logs into another machine)
+
+     Computer Configuration -> Policies-> Windows Settings -> Security Settings -> Local Policies -> Audit Policy -> (Audit account logon events/Audit logon events)
+
+Deploying the Client Agent
+ 
 #>
