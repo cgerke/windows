@@ -1,0 +1,3 @@
+https://blogs.technet.microsoft.com/networking/2010/12/16/disabling-firewall-alerts-in-the-action-center/
+
+User Configuration\Policies\Administrative Templates\Start Menu and Taskbar\Remove the Action Center icon

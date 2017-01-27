@@ -1,0 +1,2 @@
+Computer Configuration > Policies > Administrative Templates > Windows Component > Windows Update
+Computer Configuration > Policies > Windows Settings > Security Settings > System Services > Windows Update
