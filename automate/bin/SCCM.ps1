@@ -207,8 +207,7 @@ Configure Endpoint protection
         All
     
      Administration > Site Configuration > Sites
-        Settings Ribbon > Software Update Point
-        Products > Forefront Endpoint Protection 2010
+        Settings Ribbon > Software Update Point > Products > Forefront Endpoint Protection 2010
 
     Software Library > Software Updates > All Software Updates > Synchronize Software Updates
         This can take hours... refer to wsyncmgr.log
@@ -227,9 +226,24 @@ Configure Custom AntiMalware Policies
     Assets and Compliance > Endpoint Protection > Antimalware Policies > Create Antimalware Policy
     Deploy
 
-Create a Software Update Group that Contains the Software Updates
-    Software Library > Software Updates > (filter and select) > Create Software Update Group
-    Deploy
+Configure the SUP Products to Sync and Perform a Sync
+    Administration > Site Configuration > Sites
+        Settings Ribbon > Software Update Point > Products > Windows 7
+
+    Software Library > Software Updates > All Software Updates > Synchronize Software Updates
+        This can take hours... refer to wsyncmgr.log
+
+    Create a Software Update Group that Contains the Software Updates
+        Software Library > Software Updates
+            Specify Search Criteria for Software Updates
+                Product = Windows 7
+                Bulletin ID =MS
+                Expired = No
+                Superseded = No
+            > Create Software Update Group
+        Deploy
+
+    Duplicate the step above and create a second Software Update Group that Contains the Software Updates for Build and Capture Tasks later.
 
 Enable PXE
     Administration > Site Configuration > Servers and Site System Roles > PXE
@@ -242,9 +256,46 @@ Add the Windows 7 X64 operating system image
     Distribute Content
 
 Customise  boot images and then Distribute the Boot images to DP's
-    Software Library > Operating Systems > Boot images
+    Software Library > Operating Systems > Boot images > * > Properties
         Customization > Enable Command Support
         Data Source > Deploy this boot image from the PXE service Point
         Distribute Content
+        SMSProv.log
+
+Create and then Distribute the Configmgr Client Package to DP's
+    Software Library > Application Management > Packages > Create Package from Definition
+        Configuration Manager Client Upgrade
+        Always obtain source files from a source folder
+        Network path (unc name) > \\server\sms_xxx\client
+        Distribute Content
+
+Create the Build and Capture Task Sequence
+    Software Library > Operating Systems > Task Sequences
+        Build and Capture a reference operating system image
+            X64 boot image
+            DON'T enter product key
+            ENTER administrator password
+            Join a workgroup (keeps the build clean of domain changes)
+            Microsoft Configuration Manager Client Upgrade package created earlier
+                Installation Properties > SMSMP=SCCMSERVER FQDN (Windows update switch)
+            All software updates
+            \sources\os\captures\
+
+Import Computer Information
+    Assets and Compliance > Devices > Import Computer Information > Import single computers
+    Add computers to the Build and Capture collection create earlier
+
+Software Library > Operating Systems > Task Sequences
+    Deploy to the Build and Capture collection
+        Available
+        Make available to boot media and PXE
+
+Enable the Network Access Account
+    Administration > Site Configuration > Sites > * > Configure Site Components > Software Distribution > Network Access Account
+
+PXE boot the capture Machine
+
+(any errors about packages not being found, then enable the following setting in Data Access for all packages in your task sequence including
+the boot image:- copy the contents in this package to a package share on distribution points)
 
 #>
