@@ -295,7 +295,15 @@ Enable the Network Access Account
 
 PXE boot the capture Machine
 
-(any errors about packages not being found, then enable the following setting in Data Access for all packages in your task sequence including
-the boot image:- copy the contents in this package to a package share on distribution points)
+Errors about packages not being found
+    Enable the following setting in Data Access for all packages in your task sequence including
+    the boot image:- copy the contents in this package to a package share on distribution points)
+
+Workarounds for image copy failures
+    dism /Mount-Wim /WimFile:C:\RemoteInstall\SMSImages\CGE00004\boot.CGE00004.wim /index:1 /MountDir:C:\RemoteInstall\SMSTempBootFiles\CGE00004
+    dism /Mount-Wim /WimFile:C:\RemoteInstall\SMSImages\CGE00005\boot.CGE00005.wim /index:1 /MountDir:C:\RemoteInstall\SMSTempBootFiles\CGE00005
+
+    dism /unmount-Wim /MountDir:C:\RemoteInstall\SMSTempBootFiles\CGE00004 /commit
+    dism /unmount-Wim /MountDir:C:\RemoteInstall\SMSTempBootFiles\CGE00005 /commit
 
 #>
