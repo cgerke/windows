@@ -1,5 +1,4 @@
-Write-Host "Hello world"
-
+# Invoking DandISetEnv.bat to set environment variables.
 function Invoke-CmdScript {
     param([string]$script, [string]$parameters)
     $tempFile = [IO.Path]::GetTempFileName()
@@ -11,6 +10,8 @@ function Invoke-CmdScript {
     }
     Remove-Item $tempFile
 }
-Write-Host "Setting envorionment variables for ADK..."
+
 Invoke-CmdScript -script "C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\DandISetEnv.bat"
 Get-ChildItem env:\
+
+#& "C:\Program Files\7-Zip\7z.exe" x -y -o\ISO indows_7_pro_x64.ISO.iso
