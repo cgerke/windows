@@ -16,10 +16,11 @@
             "shell": {
                 "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 "args": [
+                    "-NoExit",
                     "-NoProfile",
                     "-ExecutionPolicy",
                     "Bypass",
-                    "-Command"
+                    "-File"
                 ]
             }
         }
@@ -28,7 +29,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "Start-Process powershell -ArgumentList '-NoExit -NoProfile -ExecutionPolicy Bypass ${cwd}/build.ps1' -Verb runAs",
+            "command": "${cwd}/build.ps1",
             "group": {
                 "kind": "build",
                 "isDefault": true
