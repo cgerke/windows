@@ -1,11 +1,14 @@
 /*
-!.gitignore
-!README.md
+!.vscode
 !automate
 automate/*.exe
 automate/*.msu
 automate/bin/*.exe
 automate/bin/*.msu
+!.gitignore
+!build.ps1
+!README.md
+!windows.code-workspace
 !*.bat
 !*.cmd
 !*.ps1
