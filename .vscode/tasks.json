@@ -34,6 +34,15 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Build Verbose",
+            "type": "shell",
+            "command": "${cwd}/build.ps1 -Verbose",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }
