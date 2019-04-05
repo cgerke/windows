@@ -15,7 +15,10 @@ function Invoke-Cmd {
     Mandatory file to execute.
     #>
     [cmdletbinding()]
-    param([string]$File, [string]$parameters)
+    param(
+        [string]$File,
+        [string]$parameters
+    )
     $tmpFile = [IO.Path]::GetTempFileName()
     cmd.exe /c "`"$File`" `"$parameters`" && set > `"$tmpFile`""
     Get-Content $tmpFile | ForEach-Object {
@@ -30,6 +33,14 @@ function Invoke-Cmd {
 }
 
 function Invoke-FileBrowser {
+    <#
+    .SYNOPSIS
+    Open file dialog.
+    .DESCRIPTION
+    Open a windows explorer file selector.
+    .EXAMPLE
+    Invoke-FileBrowser
+    #>
     Add-Type -AssemblyName System.Windows.Forms
     $FileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{
         Multiselect = $false # Multiple files can be chosen
@@ -37,17 +48,15 @@ function Invoke-FileBrowser {
     }
 
     [void]$FileBrowser.ShowDialog()
-    $file = $FileBrowser.FileName;
     If ($FileBrowser.FileNames -like "*\*") {
         # Do something
         $FileBrowser.FileName #Lists selected files (optional)
-    }
-    else {
+    } else {
         Write-Host "Cancelled by user"
     }
 }
 
-function Invoke-Extract {
+function New-ISO {
     Param(
         [Parameter(Mandatory = $true)]
         [ValidateScript( {
@@ -70,7 +79,6 @@ function Invoke-Extract {
 
     # install.wim test
     $Drive = (Get-DiskImage -ImagePath $File | Get-Volume).DriveLetter
-    $Label = (Get-DiskImage -ImagePath $File | Get-Volume).FriendlyName
     If (-Not "$Drive`:\sources\install.wim" | Test-Path ) {
         Throw "Missing install.wim"
     }
@@ -96,14 +104,13 @@ function Invoke-Extract {
     $etfsboot = "$tools\etfsboot.com"
     $efisys   = "$tools\efisys.bin"
     $Arguments = '2#p0,e,b"{0}"#pEF,e,b"{1}"' -f $etfsboot, $efisys
-    Start-Process $oscdimg -args @("-bootdata:$Arguments", '-u2', '-udfver102', ".\$Build", ".\$Build.Unattended.iso") -wait -nonewwindow
+    Start-Process $oscdimg -args @("-bootdata:$Arguments", '-u2', '-udfver102', ".\$Build", ".\$Build.autounattend.iso") -wait -nonewwindow
 
-    # TODO
-    # Test for success then clean-up
-    # Remove-Item $workspace -recurse -force
+    # TODO Test for success then clean-up
+    Remove-Item $workspace -recurse -force
 
     # Clean up
-    # Dismount-DiskImage -ImagePath $File
+    Dismount-DiskImage -ImagePath $File
 }
 
 # Invoke ADK
@@ -113,10 +120,9 @@ Invoke-Cmd -File "C:\Program Files (x86)\Windows Kits\10\Assessment and Deployme
 If ( $File ) {
     # Get the full path to avoid issues with .\
     $FilePath = Resolve-Path -Path $File
-    Invoke-Extract -File "$FilePath"
-}
-Else {
-    Invoke-Extract -File $(Invoke-FileBrowser)
+    New-ISO -File "$FilePath"
+} Else {
+    New-ISO -File $(Invoke-FileBrowser)
 }
 
 # TODO

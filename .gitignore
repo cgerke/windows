@@ -12,4 +12,3 @@ automate/bin/*.msu
 !*.bat
 !*.cmd
 !*.ps1
-!*.txt
