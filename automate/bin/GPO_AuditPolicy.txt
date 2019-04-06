@@ -1,1 +1,0 @@
-Computer Configuration > Policies> Windows Settings > Security Settings > Local Policies > Audit Policy > (Audit account logon events/Audit logon events)
