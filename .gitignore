@@ -1,14 +1,9 @@
 /*
 !.vscode
-!automate
-automate/*.exe
-automate/*.msu
-automate/bin/*.exe
-automate/bin/*.msu
+!$OEM$
+$OEM$/$$/Setup/Resources
 !.gitignore
+!autounattend.xml
 !build.ps1
 !README.md
 !windows.code-workspace
-!*.bat
-!*.cmd
-!*.ps1

@@ -91,15 +91,14 @@ function New-ISO {
     & Robocopy.exe "$drive`:\" ".\$Build\" /ETA /MIR /R:0 /W:0
 
     # Customise
-    & imagex.exe /info ".\$Build\sources\boot.wim" > ".\$Build\sources\`$OEM$\`$$\BUILD.txt"
-    & imagex.exe /info ".\$Build\sources\install.wim" >> ".\$Build\sources\`$OEM$\`$$\BUILD.txt"
+    & imagex.exe /info ".\$Build\sources\install.wim" > ".\$Build\BUILD.txt"
     & Robocopy.exe "`$OEM$" ".\$Build\sources\`$OEM$" /ETA /MIR /R:1 /W:1
 
     # TODO
     # Invoke-FileBrowser as an option
 
     # autounattend
-    Copy-Item ".\$Build.xml" ".\$Build\autounattend.xml"
+    Copy-Item ".\autounattend.xml" ".\$Build\autounattend.xml"
 
     $tools    = 'C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\oscdimg'
     $oscdimg  = "$tools\oscdimg.exe"
@@ -126,8 +125,3 @@ If ( $File ) {
 } Else {
     New-ISO -File $(Invoke-FileBrowser)
 }
-
-# TODO
-# Build WinPE
-
-# Build USB
